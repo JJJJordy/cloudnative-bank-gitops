@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sample-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/JJJJordy/cloudnative-bank-gitops.git
+    targetRevision: main
+    path: k8s-manifests/sample-app
+    kustomize: {}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bank-dev
+  syncPolicy:
+    # NOTE: Keep manual for the demo. Uncomment to enable auto-sync with prune & self-heal.
+    # automated:
+    #   prune: true
+    #   selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

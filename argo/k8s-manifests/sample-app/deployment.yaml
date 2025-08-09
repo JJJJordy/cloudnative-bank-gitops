@@ -1,0 +1,34 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-app
+  labels:
+    app: sample-app
+spec:
+  replicas: 2  # <-- Intentionally 2 to demonstrate drift (scale live to 5, then sync back)
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+        - name: podinfo
+          image: ghcr.io/stefanprodan/podinfo:6.3.5
+          ports:
+            - containerPort: 9898
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 9898
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 9898
+            initialDelaySeconds: 5
+            periodSeconds: 10
